@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动健康 Claw — 体系全景图</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: #f8f9fc;
+  color: #1a1a2e;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 标题 */
+.main-title {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.main-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+.main-title p {
+  font-size: 14px;
+  color: #8c8ca1;
+}
+
+/* 用户层 */
+.user-layer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.user-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8e0f0 0%, #f0e8f8 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.user-circle::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(160,130,200,0.1) 0%, rgba(160,130,200,0.05) 100%);
+}
+.user-icon { font-size: 32px; margin-bottom: 4px; }
+.user-label { font-size: 14px; font-weight: 600; color: #5a4a7a; }
+
+.user-need-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid #eee;
+  text-align: center;
+}
+.user-need-title { font-size: 12px; color: #8c8ca1; margin-bottom: 8px; }
+.user-need-text { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+
+.user-targets {
+  display: flex;
+  gap: 12px;
+}
+.target-chip {
+  background: #fff;
+  border: 1px solid #e0e0e8;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #5a5a7a;
+  white-space: nowrap;
+}
+.target-chip.no-goal { border-color: #d0d0e0; color: #8c8ca1; }
+.target-chip.has-goal { border-color: #4a90d9; color: #4a90d9; background: #f0f6ff; }
+
+/* 连接箭头 */
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+}
+.arrow-down {
+  width: 2px;
+  height: 32px;
+  background: linear-gradient(180deg, #c0c0d0 0%, #a0a0b8 100%);
+  position: relative;
+  margin: 0 auto;
+}
+.arrow-down::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: -5px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #a0a0b8;
+}
+.arrow-label {
+  font-size: 11px;
+  color: #a0a0b8;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* 双通道 */
+.dual-channel {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.channel-box {
+  flex: 1;
+  max-width: 440px;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+}
+.channel-base {
+  background: linear-gradient(135deg, #f0f7ff 0%, #fff 100%);
+  border: 1px solid #d0e0f0;
+}
+.channel-goal {
+  background: linear-gradient(135deg, #f0fff4 0%, #fff 100%);
+  border: 1px solid #c0e8d0;
+}
+.channel-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.tag-blue { background: #e0f0ff; color: #4a90d9; }
+.tag-green { background: #e0f8ec; color: #2daa6e; }
+.channel-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.channel-desc { font-size: 13px; color: #6a6a8a; line-height: 1.6; }
+.channel-features {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.feature-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid #e0e0e8;
+  color: #5a5a7a;
+}
+
+.channel-connect {
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+.connect-line {
+  width: 24px;
+  height: 2px;
+  background: #c0d0e0;
+  position: relative;
+}
+.connect-label {
+  font-size: 10px;
+  color: #a0a0b8;
+  white-space: nowrap;
+  position: absolute;
+  top: -16px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+/* AI 编排层 */
+.ai-layer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2a2a4e 100%);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.ai-layer::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,200,130,0.08) 0%, transparent 70%);
+}
+.ai-layer-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+.ai-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4CD964 0%, #2daa6e 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+.ai-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+.ai-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+
+.ai-content {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  position: relative;
+}
+.ai-box {
+  flex: 1;
+  max-width: 380px;
+  border-radius: 14px;
+  padding: 20px;
+}
+.ai-box-knowledge {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.ai-box-engine {
+  background: rgba(74,200,130,0.08);
+  border: 1px solid rgba(74,200,130,0.2);
+}
+.ai-box-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.ai-tag-gray { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+.ai-tag-green { background: rgba(74,200,130,0.15); color: #4CD964; }
+.ai-box-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.ai-box-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+.ai-box-list { list-style: none; }
+.ai-box-list li {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ai-box-list li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+.ai-box-engine .ai-box-list li::before { background: #4CD964; }
+
+.ai-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+}
+.ai-arrow-icon {
+  font-size: 20px;
+  color: rgba(74,200,130,0.5);
+}
+.ai-arrow-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  writing-mode: vertical-lr;
+  letter-spacing: 2px;
+}
+
+/* 中间层 */
+.middle-layer {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  border: 1px solid #e8e8f0;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.03);
+}
+.middle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.middle-title { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+.middle-badge {
+  font-size: 11px;
+  color: #8c8ca1;
+  background: #f0f0f8;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.middle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.middle-card {
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.middle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.mc-assess { background: #f6f0ff; }
+.mc-assess::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.mc-cause { background: #fff7ed; }
+.mc-cause::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.mc-stage { background: #eff6ff; }
+.mc-stage::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.mc-effect { background: #f0fdf4; }
+.mc-effect::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.mc-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.mc-assess .mc-title { color: #7c3aed; }
+.mc-cause .mc-title { color: #d97706; }
+.mc-stage .mc-title { color: #2563eb; }
+.mc-effect .mc-title { color: #16a34a; }
+.mc-list { list-style: none; }
+.mc-list li {
+  font-size: 12px;
+  color: #5a5a7a;
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mc-list li::before {
+  content: '';
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mc-assess .mc-list li::before { background: #8b5cf6; }
+.mc-cause .mc-list li::before { background: #f59e0b; }
+.mc-stage .mc-list li::before { background: #3b82f6; }
+.mc-effect .mc-list li::before { background: #22c55e; }
+
+/* 底层：输入 + 输出 */
+.io-layer {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.io-box {
+  flex: 1;
+  max-width: 440px;
+  border-radius: 20px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.io-input {
+  background: linear-gradient(135deg, #faf5ff 0%, #fff 100%);
+  border: 1px solid #e8d8f8;
+}
+.io-output {
+  background: linear-gradient(135deg, #f0fff7 0%, #fff 100%);
+  border: 1px solid #c8e8d8;
+}
+.io-box::before {
+  content: '';
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  opacity: 0.15;
+}
+.io-input::before {
+  background: radial-gradient(circle, #a78bfa 0%, transparent 70%);
+  top: -80px;
+  right: -80px;
+}
+.io-output::before {
+  background: radial-gradient(circle, #4ade80 0%, transparent 70%);
+  bottom: -80px;
+  left: -80px;
+}
+
+.io-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.io-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.io-input .io-icon { background: #ede9fe; }
+.io-output .io-icon { background: #dcfce7; }
+.io-title { font-size: 16px; font-weight: 700; }
+.io-subtitle { font-size: 12px; color: #8c8ca1; }
+
+.io-section {
+  margin-bottom: 14px;
+  position: relative;
+}
+.io-section:last-child { margin-bottom: 0; }
+.io-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.io-input .io-section-title { color: #7c3aed; }
+.io-output .io-section-title { color: #16a34a; }
+
+.io-items { display: flex; flex-direction: column; gap: 6px; }
+.io-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #5a5a7a;
+  line-height: 1.5;
+}
+.io-item-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.io-item-detail { font-size: 11px; color: #a0a0b8; }
+
+/* 闭环箭头 */
+.loop-section {
+  margin-top: 36px;
+  text-align: center;
+}
+.loop-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 16px auto;
+  max-width: 900px;
+  position: relative;
+}
+.loop-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.loop-dot {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  position: relative;
+  z-index: 2;
+}
+.loop-dot-1 { background: #ede9fe; }
+.loop-dot-2 { background: #fff7ed; }
+.loop-dot-3 { background: #eff6ff; }
+.loop-dot-4 { background: #dcfce7; }
+.loop-dot-5 { background: #fef2f2; }
+.loop-label { font-size: 13px; font-weight: 600; color: #3a3a5a; }
+.loop-connector {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, #d0d0e0, #e0e0f0);
+  position: relative;
+  margin-top: -24px;
+  z-index: 1;
+}
+.loop-connector::after {
+  content: '›';
+  position: absolute;
+  right: -2px;
+  top: -9px;
+  font-size: 16px;
+  color: #a0a0b8;
+}
+
+.loop-return {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.loop-return-line {
+  width: 600px;
+  height: 1px;
+  background: linear-gradient(90deg, #4CD964, #a0a0b8, #8b5cf6);
+  position: relative;
+}
+.loop-return-label {
+  font-size: 11px;
+  color: #8c8ca1;
+  white-space: nowrap;
+}
+.loop-bottom-text {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #8c8ca1;
+  line-height: 1.8;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 标题 -->
+  <div class="main-title">
+    <h1>运动健康 Claw — 体系全景图</h1>
+    <p>目标驱动的自动化健康管理系统</p>
+  </div>
+
+  <!-- 用户层 -->
+  <div class="user-layer">
+    <div class="user-circle">
+      <div class="user-icon">👤</div>
+      <div class="user-label">用户</div>
+    </div>
+
+    <div>
+      <div class="user-need-box">
+        <div class="user-need-title">核心需求</div>
+        <div class="user-need-text">降低"做正确的事"的执行成本</div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 12px; justify-content: center;">
+        <div class="target-chip no-goal">无明确目标："我想健康"</div>
+        <div class="target-chip has-goal">有明确目标："我要减 5 斤"</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="target-chip" style="text-align: center;">改善睡眠</div>
+      <div class="target-chip" style="text-align: center;">减脂减重</div>
+      <div class="target-chip" style="text-align: center;">缓解压力</div>
+      <div class="target-chip" style="text-align: center;">状态管理</div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="flow-arrow"><div class="arrow-down"></div></div>
+
+  <!-- 双通道：底座 + 目标达成 -->
+  <div class="dual-channel">
+    <div class="channel-box channel-base">
+      <span class="channel-tag tag-blue">底座</span>
+      <div class="channel-title">状态管理兜底</div>
+      <div class="channel-desc">用户戴上设备即自动运行，无需设定目标。每日呈现状态、分析原因、微干预。</div>
+      <div class="channel-features">
+        <span class="feature-tag">今日状态评分</span>
+        <span class="feature-tag">归因分析</span>
+        <span class="feature-tag">每日微建议</span>
+      </div>
+      <div class="channel-connect">
+        <div class="connect-line">
+          <div class="connect-label">发现问题</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-box channel-goal">
+      <span class="channel-tag tag-green">升级</span>
+      <div class="channel-title">目标达成模式</div>
+      <div class="channel-desc">围绕用户设定的目标或系统发现的问题，自动规划→执行→评估→调整。</div>
+      <div class="channel-features">
+        <span class="feature-tag">睡眠改善</span>
+        <span class="feature-tag">减脂管理</span>
+        <span class="feature-tag">压力缓解</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="flow-arrow"><div class="arrow-down"></div></div>
+
+  <!-- 第三层：输入层（感知） -->
+  <div class="io-box io-input" style="max-width: 100%; margin-bottom: 20px;">
+    <div class="io-header">
+      <div class="io-icon">📡</div>
+      <div>
+        <div class="io-title">输入层</div>
+        <div class="io-subtitle">感知用户状态</div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+      <div>
+        <div class="io-section-title">穿戴设备数据</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">⌚</span><span>心率 · HRV · 血氧</span></div>
+          <div class="io-item"><span class="io-item-icon">⌚</span><span>睡眠 · 步数 · 压力</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="io-section-title">IoT 环境数据</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">🏠</span><span>室温 · 湿度 · 光照</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="io-section-title">用户手动输入</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">📋</span><span>体检报告 · 身高体重</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="io-section-title">行为标记</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">🏷️</span><span>用药 · 饮食 · 情绪</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="flow-arrow"><div class="arrow-down"></div></div>
+
+  <!-- 第四层：中间层（组合能力） -->
+  <div class="middle-layer">
+    <div class="middle-header">
+      <div class="middle-title">中间层 — 组合能力</div>
+      <div class="middle-badge">将高频分析模式沉淀为稳定能力，AI 直接调用结论</div>
+    </div>
+    <div class="middle-grid">
+      <div class="middle-card mc-assess">
+        <div class="mc-title">评估类</div>
+        <ul class="mc-list">
+          <li>今日综合状态</li>
+          <li>睡眠质量评估</li>
+          <li>压力水平评估</li>
+          <li>运动负荷评估</li>
+          <li>身体成分趋势</li>
+        </ul>
+      </div>
+      <div class="middle-card mc-cause">
+        <div class="mc-title">归因类</div>
+        <ul class="mc-list">
+          <li>行为-健康关联分析</li>
+          <li>睡眠影响因子归因</li>
+          <li>体重变化归因</li>
+          <li>压力峰值归因</li>
+        </ul>
+      </div>
+      <div class="middle-card mc-stage">
+        <div class="mc-title">阶段识别</div>
+        <ul class="mc-list">
+          <li>用户运动水平分级</li>
+          <li>目标执行阶段判断</li>
+          <li>小白 / 进阶 / 专业</li>
+          <li>启动 / 坚持 / 巩固</li>
+        </ul>
+      </div>
+      <div class="middle-card mc-effect">
+        <div class="mc-title">效果归因</div>
+        <ul class="mc-list">
+          <li>努力→改善因果显性化</li>
+          <li>跨维度联动分析</li>
+          <li>初期每日微进步</li>
+          <li>后期里程碑成就</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="flow-arrow"><div class="arrow-down"></div></div>
+
+  <!-- 第五层：AI 编排层 -->
+  <div class="ai-layer">
+    <div class="ai-layer-header">
+      <div class="ai-badge">CORE</div>
+      <div class="ai-title">AI 编排层（Claw 核心）</div>
+      <div class="ai-subtitle">在专业知识框架内，为每个用户做个性化的实时决策</div>
+    </div>
+
+    <div class="ai-content">
+      <div class="ai-box ai-box-knowledge">
+        <span class="ai-box-tag ai-tag-gray">棋谱</span>
+        <div class="ai-box-title">专业知识库</div>
+        <div class="ai-box-sub">人类专家定义"能做什么"</div>
+        <ul class="ai-box-list">
+          <li>循证干预方法</li>
+          <li>适用条件与禁忌</li>
+          <li>效果评估指标</li>
+          <li>方案调整策略</li>
+        </ul>
+      </div>
+
+      <div class="ai-arrow">
+        <div style="text-align: center;">
+          <div class="ai-arrow-icon">→</div>
+          <div class="ai-arrow-label">约束</div>
+        </div>
+      </div>
+
+      <div class="ai-box ai-box-engine">
+        <span class="ai-box-tag ai-tag-green">棋手</span>
+        <div class="ai-box-title">AI 个性化编排</div>
+        <div class="ai-box-sub">AI 决定"此刻对这个人做哪个"</div>
+        <ul class="ai-box-list">
+          <li>判断此刻该做什么</li>
+          <li>选择最优触发时机</li>
+          <li>动态调整方案</li>
+          <li>切换反馈策略</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 箭头 -->
+  <div class="flow-arrow"><div class="arrow-down"></div></div>
+
+  <!-- 第六层：输出层（触达+干预） -->
+  <div class="io-box io-output" style="max-width: 100%; margin-bottom: 20px;">
+    <div class="io-header">
+      <div class="io-icon">🎯</div>
+      <div>
+        <div class="io-title">输出层</div>
+        <div class="io-subtitle">触达 + 干预</div>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+      <div>
+        <div class="io-section-title">信息触达</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">⌚</span><span>手表轻震提醒 · 表盘卡片</span></div>
+          <div class="io-item"><span class="io-item-icon">📱</span><span>App 状态页 · 弹窗推送</span></div>
+          <div class="io-item"><span class="io-item-icon">🔊</span><span>小爱音箱语音播报</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="io-section-title">干预执行</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">💡</span><span>IoT 环境控制（灯光·空调·窗帘）</span></div>
+          <div class="io-item"><span class="io-item-icon">⚙️</span><span>HyperOS 系统能力（勿扰·闹钟）</span></div>
+          <div class="io-item"><span class="io-item-icon">🏃</span><span>手表工具调起（呼吸·运动）</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="io-section-title">正反馈</div>
+        <div class="io-items">
+          <div class="io-item"><span class="io-item-icon">📈</span><span>初期：每日微进步</span></div>
+          <div class="io-item"><span class="io-item-icon">🏆</span><span>后期：里程碑式成就</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 闭环 -->
+  <div class="loop-section">
+    <div style="margin-top: 36px; margin-bottom: 12px;">
+      <div style="font-size: 16px; font-weight: 700; color: #1a1a2e;">闭环运转逻辑</div>
+      <div style="font-size: 13px; color: #8c8ca1; margin-top: 4px;">持续循环，越用越懂用户</div>
+    </div>
+    <div class="loop-flow">
+      <div class="loop-step">
+        <div class="loop-dot loop-dot-1">📡</div>
+        <div class="loop-label">感知状态</div>
+      </div>
+      <div class="loop-connector"></div>
+      <div class="loop-step">
+        <div class="loop-dot loop-dot-2">🔍</div>
+        <div class="loop-label">评估归因</div>
+      </div>
+      <div class="loop-connector"></div>
+      <div class="loop-step">
+        <div class="loop-dot loop-dot-3">📋</div>
+        <div class="loop-label">生成方案</div>
+      </div>
+      <div class="loop-connector"></div>
+      <div class="loop-step">
+        <div class="loop-dot loop-dot-4">⚡</div>
+        <div class="loop-label">自动执行</div>
+      </div>
+      <div class="loop-connector"></div>
+      <div class="loop-step">
+        <div class="loop-dot loop-dot-5">📊</div>
+        <div class="loop-label">效果评估</div>
+      </div>
+    </div>
+    <div class="loop-return">
+      <span class="loop-return-label">⬅ 数据回流，持续优化</span>
+      <div class="loop-return-line"></div>
+      <span class="loop-return-label">下一轮循环 ➡</span>
+    </div>
+    <div class="loop-bottom-text">
+      每一轮循环中，系统都在积累对用户的理解——什么时间推他最有效、什么方式他最容易接受、什么目标难度他能坚持。<br>
+      Claw 的核心竞争力，是在持续的循环中不断降低"做正确的事"的成本，直到健康行为变成用户不需要思考的日常。
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
