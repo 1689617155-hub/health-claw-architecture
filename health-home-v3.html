@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健康首页 · 高保真原型</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E8EAED;
+  --app-bg: #F2F3F5;
+  --white: #FFFFFF;
+  --card: #FFFFFF;
+  --text-1: #1A1C1E;
+  --text-2: #4A4D52;
+  --text-3: #8A8D93;
+  --text-4: #B0B3B8;
+  --divider: #E8EAED;
+  --green: #34C759;
+  --green-light: #E8F8EE;
+  --green-dark: #1B9E3E;
+  --orange: #FF9F0A;
+  --orange-light: #FFF3E0;
+  --orange-dark: #C77800;
+  --red: #FF3B30;
+  --red-light: #FFEBEE;
+  --blue: #007AFF;
+  --purple: #AF52DE;
+  --yellow: #FFCC00;
+  --phone-w: 390px;
+  --phone-h: 844px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  font-family: 'Plus Jakarta Sans', -apple-system, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== Page Layout ==================== */
+.prototype-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+
+/* ==================== Annotations ==================== */
+.annotations {
+  width: 200px;
+  padding-top: 110px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.anno-group {
+  position: relative;
+  margin-bottom: 0;
+  padding-right: 24px;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: annoIn 0.5s ease forwards;
+}
+
+@keyframes annoIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.anno-group::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 16px;
+  height: 1px;
+  background: var(--text-4);
+}
+
+.anno-group::before {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-4);
+}
+
+.anno-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.anno-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.anno-list li {
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.6;
+  padding-left: 8px;
+  position: relative;
+}
+
+.anno-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--text-4);
+}
+
+.anno-sub {
+  padding-left: 12px !important;
+  font-size: 9px !important;
+  color: var(--text-4) !important;
+}
+
+/* ==================== Phone Frame ==================== */
+.phone {
+  width: calc(var(--phone-w) + 24px);
+  height: calc(var(--phone-h) + 24px);
+  background: #1A1C1E;
+  border-radius: 52px;
+  padding: 12px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(255,255,255,0.08),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.phone::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 28px;
+  background: #1A1C1E;
+  border-radius: 0 0 18px 18px;
+  z-index: 20;
+}
+
+.phone-screen {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  border-radius: 40px;
+  background: var(--app-bg);
+  overflow: hidden;
+  position: relative;
+}
+
+.app-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.app-scroll::-webkit-scrollbar { display: none; }
+
+/* ==================== Status Bar ==================== */
+.status-bar {
+  height: 50px;
+  padding: 14px 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-1);
+  position: sticky;
+  top: 0;
+  background: var(--app-bg);
+  z-index: 10;
+}
+
+.status-bar .time { font-family: 'Plus Jakarta Sans', sans-serif; }
+.status-icons { display: flex; gap: 4px; align-items: center; }
+.status-icons svg { width: 16px; height: 16px; fill: var(--text-1); }
+
+/* ==================== App Header ==================== */
+.app-header {
+  padding: 8px 20px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.5px;
+}
+
+.app-header .date {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-left: 8px;
+}
+
+.header-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.header-icon:active { transform: scale(0.92); }
+.header-icon svg { width: 18px; height: 18px; fill: var(--text-2); }
+
+/* ==================== Content Padding ==================== */
+.content { padding: 0 16px 100px; }
+
+/* ==================== Section: Today Status ==================== */
+.today-status {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.status-score-card {
+  flex: 1;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.status-score-card .label {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.score-ring {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.score-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-ring .ring-bg {
+  fill: none;
+  stroke: #E8F8EE;
+  stroke-width: 7;
+}
+
+.score-ring .ring-fg {
+  fill: none;
+  stroke: url(#scoreGreen);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 226;
+  stroke-dashoffset: 226;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+}
+
+.score-ring.animated .ring-fg {
+  stroke-dashoffset: 24.86;
+}
+
+.score-ring .score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--green-dark);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.status-desc {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 3px;
+}
+
+.status-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: center;
+}
+
+.status-metrics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.metric-card {
+  flex: 1;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.metric-unit {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-left: 2px;
+}
+
+.pressure-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* ==================== Section: AI Discovery ==================== */
+.ai-section {
+  margin-bottom: 14px;
+}
+
+.ai-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+}
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--orange-dark);
+  margin-bottom: 10px;
+}
+
+.ai-badge::before {
+  content: '✦';
+  font-size: 10px;
+}
+
+.ai-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.ai-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ai-btn-primary {
+  background: linear-gradient(135deg, var(--green), var(--green-dark));
+  color: white;
+  border: none;
+  border-radius: 22px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(52,199,89,0.3);
+}
+
+.ai-btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: 0 1px 4px rgba(52,199,89,0.2);
+}
+
+.ai-btn-primary.accepted {
+  background: var(--green-light);
+  color: var(--green-dark);
+  box-shadow: none;
+}
+
+.ai-btn-secondary {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--text-3);
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.ai-btn-secondary:active { opacity: 0.5; }
+.ai-btn-secondary.dismissed { color: var(--text-4); text-decoration: line-through; }
+
+/* Risk Card */
+.risk-card {
+  background: var(--card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.risk-header {
+  background: #FFF8E1;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.risk-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--orange-dark);
+}
+
+.risk-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.risk-time {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.risk-close {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-3);
+  transition: background 0.15s;
+}
+
+.risk-close:active { background: rgba(0,0,0,0.1); }
+
+.risk-body {
+  padding: 12px 14px;
+}
+
+.risk-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.risk-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+.risk-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+.risk-desc strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.risk-link {
+  font-size: 11px;
+  color: var(--blue);
+  cursor: pointer;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.risk-chart {
+  height: 60px;
+  margin-top: 4px;
+  position: relative;
+}
+
+.risk-chart svg { width: 100%; height: 100%; }
+
+/* ==================== Section: Today Actions ==================== */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 20px 0 12px;
+  letter-spacing: -0.3px;
+}
+
+.actions-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 4px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 14px;
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--divider);
+  transition: background 0.15s;
+}
+
+.action-row:last-child { border-bottom: none; }
+
+.action-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--divider);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 12px;
+}
+
+.action-check.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+.action-info { flex: 1; }
+
+.action-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.action-name.done {
+  color: var(--text-4);
+  text-decoration: line-through;
+}
+
+.action-detail {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.action-detail.done { color: var(--text-4); }
+
+.action-btn {
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 7px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(52,199,89,0.25);
+}
+
+.action-btn:active { transform: scale(0.94); }
+.action-btn.started {
+  background: var(--green-light);
+  color: var(--green-dark);
+  box-shadow: none;
+}
+
+/* ==================== Section: Trends ==================== */
+.trends-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.trends-header .section-title { margin: 0; }
+
+.trends-summary {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.trends-summary .up { color: var(--green); }
+.trends-summary .down { color: var(--red); }
+
+.trends-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trends-grid::-webkit-scrollbar { display: none; }
+
+.trend-card {
+  min-width: 150px;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  flex-shrink: 0;
+}
+
+.trend-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.trend-name {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trend-name .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.trend-tag {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.trend-tag.up { background: var(--green-light); color: var(--green-dark); }
+.trend-tag.down { background: var(--red-light); color: var(--red); }
+.trend-tag.stable { background: #F0F0F0; color: var(--text-3); }
+
+.trend-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-bottom: 2px;
+}
+
+.trend-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+
+.trend-chart {
+  height: 36px;
+  width: 100%;
+}
+
+.trend-chart svg { width: 100%; height: 100%; }
+
+/* Week Progress */
+.week-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 14px;
+}
+
+.week-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.week-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.week-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--green);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.week-days {
+  display: flex;
+  justify-content: space-between;
+}
+
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.week-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  background: #F0F0F2;
+  color: var(--text-3);
+  transition: all 0.3s;
+}
+
+.week-dot.done {
+  background: var(--green);
+  color: white;
+}
+
+.week-dot.today {
+  background: var(--text-1);
+  color: white;
+}
+
+.week-day-label {
+  font-size: 9px;
+  color: var(--text-4);
+}
+
+/* ==================== Section: Health Data ==================== */
+.health-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 16px 0 10px;
+  padding: 0 2px;
+}
+
+.health-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.health-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.hc-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.hc-icon { font-size: 10px; }
+.hc-name { font-size: 11px; color: var(--text-3); font-weight: 500; }
+
+.hc-value {
+  font-size: 24px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.hc-unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.hc-chart {
+  height: 28px;
+  margin-top: 6px;
+}
+
+.hc-chart svg { width: 100%; height: 100%; }
+
+/* ==================== Tab Bar ==================== */
+.tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--divider);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-top: 8px;
+  z-index: 10;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.tab-item:active { opacity: 0.6; }
+
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+.tab-item.active .tab-label { color: var(--green); font-weight: 600; }
+
+/* ==================== Animations ==================== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.5s ease forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Risk card dismiss */
+.risk-card.dismissed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+/* Sparkline animation */
+@keyframes drawLine {
+  from { stroke-dashoffset: 500; }
+  to { stroke-dashoffset: 0; }
+}
+
+.spark-line {
+  stroke-dasharray: 500;
+  animation: drawLine 1.5s ease forwards;
+}
+
+/* ==================== Title ==================== */
+.page-title {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.page-title h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: -0.3px;
+}
+
+.page-title p {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text-4);
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+
+<svg style="position:absolute;width:0;height:0">
+  <defs>
+    <linearGradient id="scoreGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34C759"/>
+      <stop offset="100%" stop-color="#30D158"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div style="display:flex;flex-direction:column;align-items:center">
+<div class="page-title">
+  <h1>健康首页 · 高保真原型</h1>
+  <p>Xiaomi Health Claw · Home Screen Prototype</p>
+</div>
+
+<div class="prototype-container">
+
+<!-- ===== Left Annotations ===== -->
+<div class="annotations">
+
+  <div class="anno-group" style="margin-bottom:80px;animation-delay:0.1s">
+    <div class="anno-title">头部关键数据索引</div>
+    <ul class="anno-list">
+      <li>今日状态（状态分）</li>
+      <li>健康基石</li>
+      <li class="anno-sub">睡眠时长</li>
+      <li class="anno-sub">运动（中高强度）</li>
+      <li class="anno-sub">压力水平</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:140px;animation-delay:0.2s">
+    <div class="anno-title">关键信息呈现</div>
+    <ul class="anno-list">
+      <li>风险预警</li>
+      <li class="anno-sub">心率预警</li>
+      <li class="anno-sub">家人跌倒预警</li>
+      <li class="anno-sub">健康研究风险</li>
+      <li class="anno-sub">其他风险等</li>
+      <li>AI 洞察部分</li>
+      <li class="anno-sub">相关性洞察</li>
+      <li class="anno-sub">AI 建议等</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:100px;animation-delay:0.3s">
+    <div class="anno-title">每日行动</div>
+    <ul class="anno-list">
+      <li>AI 生成的任务列表</li>
+      <li>可执行操作入口</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:110px;animation-delay:0.4s">
+    <div class="anno-title">健康趋势</div>
+    <ul class="anno-list">
+      <li>呈现运动与健康的关系</li>
+      <li>关键指标趋势图</li>
+      <li>本周运动打卡</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="animation-delay:0.5s">
+    <div class="anno-title">其他健康数据</div>
+    <ul class="anno-list">
+      <li>静息心率 / 血氧</li>
+      <li>HRV / 体温</li>
+      <li>ECG / 今日步数</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ===== Phone ===== -->
+<div class="phone">
+<div class="phone-screen">
+<div class="app-scroll" id="appScroll">
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <span class="time">9:41</span>
+  <div class="status-icons">
+    <svg viewBox="0 0 24 24"><path d="M12 18c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm0-10c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4z" opacity="0"/><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.34C7 21.4 7.6 22 8.33 22h7.34c.73 0 1.33-.6 1.33-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+  </div>
+</div>
+
+<!-- App Header -->
+<div class="app-header">
+  <div style="display:flex;align-items:baseline">
+    <h1>健康</h1>
+    <span class="date">4月3日 ▲</span>
+  </div>
+  <div class="header-icons">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ===== Today Status ===== -->
+<div class="today-status fade-up" style="animation-delay:0.1s">
+  <div class="status-score-card">
+    <div class="label">今日状态</div>
+    <div class="score-ring" id="scoreRing">
+      <svg viewBox="0 0 80 80">
+        <circle class="ring-bg" cx="40" cy="40" r="36"/>
+        <circle class="ring-fg" cx="40" cy="40" r="36"/>
+      </svg>
+      <div class="score-text">89</div>
+    </div>
+    <div class="status-desc">精力充沛</div>
+    <div class="status-sub">适合挑战高难度工作</div>
+  </div>
+  <div class="status-metrics">
+    <div class="metric-card">
+      <div>
+        <div class="metric-label">睡眠</div>
+        <div><span class="metric-value">8</span><span class="metric-unit">小时</span><span class="metric-value">25</span><span class="metric-unit">分</span></div>
+      </div>
+      <span style="font-size:20px">😴</span>
+    </div>
+    <div class="metric-card">
+      <div>
+        <div class="metric-label">中高强度</div>
+        <div><span class="metric-value">140</span><span class="metric-unit">分钟</span></div>
+      </div>
+      <span style="font-size:20px">🏃</span>
+    </div>
+    <div class="metric-card">
+      <div>
+        <div class="metric-label">压力</div>
+        <div style="font-size:13px;color:var(--text-2);font-weight:600">放松</div>
+      </div>
+      <span class="pressure-emoji">😊</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AI Discovery ===== -->
+<div class="ai-section fade-up" style="animation-delay:0.2s">
+  <div class="ai-card">
+    <div class="ai-badge">AI 发现</div>
+    <div class="ai-text">你本周深睡连续 3 天低于 40 分钟，回溯发现和运动中断有关。今天下班走路回家试试？约 25 分钟</div>
+    <div class="ai-actions">
+      <button class="ai-btn-primary" id="aiAccept" onclick="acceptAI()">好，加入今日行动</button>
+      <button class="ai-btn-secondary" id="aiDismiss" onclick="dismissAI()">稍后再说</button>
+    </div>
+  </div>
+
+  <div class="risk-card" id="riskCard">
+    <div class="risk-header">
+      <div class="risk-header-left">⚠️ 低心率通知</div>
+      <div class="risk-header-right">
+        <span class="risk-time">04:20</span>
+        <div class="risk-close" onclick="dismissRisk()">✕</div>
+      </div>
+    </div>
+    <div class="risk-body">
+      <div class="risk-content">
+        <span class="risk-icon">❤️</span>
+        <div>
+          <div class="risk-desc">从 04:10 开始，你的心率跌至 <strong>40 次/分以下已有 10 分钟</strong>。</div>
+          <span class="risk-link">更多详细信息…</span>
+        </div>
+      </div>
+      <div class="risk-chart">
+        <svg viewBox="0 0 300 50" preserveAspectRatio="none">
+          <text x="0" y="10" font-size="8" fill="#B0B3B8" font-family="Plus Jakarta Sans">40 次/分</text>
+          <line x1="45" y1="8" x2="300" y2="8" stroke="#E8EAED" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <text x="50" y="48" font-size="7" fill="#B0B3B8" font-family="Plus Jakarta Sans">04:10</text>
+          <text x="260" y="48" font-size="7" fill="#B0B3B8" font-family="Plus Jakarta Sans">04:20</text>
+          <!-- HR line -->
+          <polyline class="spark-line" fill="none" stroke="#FF3B30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+            points="50,15 80,18 110,30 140,35 160,32 180,38 200,36 230,34 260,38 280,35"/>
+          <!-- Dots -->
+          <circle cx="110" cy="30" r="3" fill="#FF3B30" opacity="0.8"/>
+          <circle cx="180" cy="38" r="3" fill="#FF3B30" opacity="0.8"/>
+          <circle cx="260" cy="38" r="3" fill="#FF3B30" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Today Actions ===== -->
+<div class="section-title fade-up" style="animation-delay:0.3s">今日行动</div>
+<div class="actions-card fade-up" style="animation-delay:0.3s">
+  <div class="action-row">
+    <div class="action-check done">✓</div>
+    <div class="action-info">
+      <div class="action-name done">午后散步 15 分钟</div>
+      <div class="action-detail done">已于 12:45 完成 · 消耗 68 大卡</div>
+    </div>
+  </div>
+  <div class="action-row">
+    <div class="action-check" style="border-color:var(--green)"></div>
+    <div class="action-info">
+      <div class="action-name">慢跑 30 分钟</div>
+      <div class="action-detail">计划 17:30 · 中等强度</div>
+    </div>
+    <button class="action-btn" id="startBtn" onclick="startExercise()">开始</button>
+  </div>
+  <div class="action-row">
+    <div class="action-check"></div>
+    <div class="action-info">
+      <div class="action-name">23:00 前入睡</div>
+      <div class="action-detail">你入睡早的那些天，深睡平均多 20 分钟</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Trends ===== -->
+<div class="trends-header fade-up" style="animation-delay:0.4s">
+  <div class="section-title" style="margin:0">运动与健康趋势</div>
+  <div class="trends-summary"><span class="up">3项上升</span> · <span class="down">2项下降</span></div>
+</div>
+
+<div class="trends-grid fade-up" style="animation-delay:0.4s">
+  <!-- Resting HR -->
+  <div class="trend-card">
+    <div class="trend-top">
+      <div class="trend-name"><span class="dot" style="background:var(--red)"></span>静息心率</div>
+      <span class="trend-tag down">逐下降</span>
+    </div>
+    <div class="trend-value">65<span class="hc-unit"> bpm</span></div>
+    <div class="trend-sub">本周日均值 65bpm</div>
+    <div class="trend-chart">
+      <svg viewBox="0 0 130 36" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#FF3B30" stroke-width="1.5" stroke-linecap="round"
+          points="0,8 20,12 40,10 60,18 80,15 100,22 120,28 130,30"/>
+        <circle cx="130" cy="30" r="2.5" fill="#FF3B30"/>
+      </svg>
+    </div>
+  </div>
+  <!-- Steps -->
+  <div class="trend-card">
+    <div class="trend-top">
+      <div class="trend-name"><span class="dot" style="background:var(--orange)"></span>今日步数</div>
+      <span class="trend-tag up">逐上升</span>
+    </div>
+    <div class="trend-value">6,130<span class="hc-unit"> 步</span></div>
+    <div class="trend-sub">当前已走 6130步，高于目标</div>
+    <div class="trend-chart">
+      <svg viewBox="0 0 130 36" preserveAspectRatio="none">
+        <rect x="5" y="24" width="14" height="12" rx="2" fill="#FFE0B2"/>
+        <rect x="24" y="18" width="14" height="18" rx="2" fill="#FFE0B2"/>
+        <rect x="43" y="14" width="14" height="22" rx="2" fill="#FFCC80"/>
+        <rect x="62" y="10" width="14" height="26" rx="2" fill="#FFB74D"/>
+        <rect x="81" y="6" width="14" height="30" rx="2" fill="#FFA726"/>
+        <rect x="100" y="2" width="14" height="34" rx="2" fill="#FF9800"/>
+        <rect x="119" y="8" width="11" height="14" rx="2" fill="#FFE0B2" opacity="0.5"/>
+      </svg>
+    </div>
+  </div>
+  <!-- HRV -->
+  <div class="trend-card">
+    <div class="trend-top">
+      <div class="trend-name"><span class="dot" style="background:var(--green)"></span>HRV</div>
+      <span class="trend-tag up">逐上升</span>
+    </div>
+    <div class="trend-value">52<span class="hc-unit"> ms</span></div>
+    <div class="trend-sub">较上周提升 8%</div>
+    <div class="trend-chart">
+      <svg viewBox="0 0 130 36" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#34C759" stroke-width="1.5" stroke-linecap="round"
+          points="0,30 20,26 40,28 60,22 80,18 100,14 120,10 130,8"/>
+        <circle cx="130" cy="8" r="2.5" fill="#34C759"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Week Progress -->
+<div class="week-card fade-up" style="animation-delay:0.45s">
+  <div class="week-top">
+    <span class="week-label">本周运动</span>
+    <span class="week-count">3 / 5 次</span>
+  </div>
+  <div class="week-days">
+    <div class="week-day"><div class="week-dot done">一</div></div>
+    <div class="week-day"><div class="week-dot done">二</div></div>
+    <div class="week-day"><div class="week-dot done">三</div></div>
+    <div class="week-day"><div class="week-dot today">四</div></div>
+    <div class="week-day"><div class="week-dot">五</div></div>
+    <div class="week-day"><div class="week-dot">六</div></div>
+    <div class="week-day"><div class="week-dot">日</div></div>
+  </div>
+</div>
+
+<!-- ===== Health Data ===== -->
+<div class="health-section-title fade-up" style="animation-delay:0.5s">健康数据</div>
+<div class="health-grid fade-up" style="animation-delay:0.5s">
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">❤️</span><span class="hc-name">静息心率</span></div>
+    <div class="hc-value">72 <span class="hc-unit">bpm</span></div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#FF3B30" stroke-width="1.2" stroke-linecap="round" opacity="0.6"
+          points="0,14 15,12 30,16 45,10 60,14 75,13 90,15 105,11 120,14 135,12 150,14"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">🫁</span><span class="hc-name">血氧</span></div>
+    <div class="hc-value">97<span class="hc-unit">%</span></div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#007AFF" stroke-width="1.2" stroke-linecap="round" opacity="0.6"
+          points="0,6 20,8 40,5 60,7 80,6 100,8 120,5 140,7 150,6"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">💚</span><span class="hc-name">HRV</span></div>
+    <div class="hc-value">45 <span class="hc-unit">ms</span></div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <rect x="5" y="10" width="10" height="18" rx="2" fill="#34C759" opacity="0.3"/>
+        <rect x="20" y="6" width="10" height="22" rx="2" fill="#34C759" opacity="0.4"/>
+        <rect x="35" y="2" width="10" height="26" rx="2" fill="#34C759" opacity="0.5"/>
+        <rect x="50" y="8" width="10" height="20" rx="2" fill="#34C759" opacity="0.4"/>
+        <rect x="65" y="4" width="10" height="24" rx="2" fill="#34C759" opacity="0.6"/>
+        <rect x="80" y="10" width="10" height="18" rx="2" fill="#34C759" opacity="0.3"/>
+        <rect x="95" y="2" width="10" height="26" rx="2" fill="#34C759" opacity="0.7"/>
+        <rect x="110" y="6" width="10" height="22" rx="2" fill="#34C759" opacity="0.5"/>
+        <rect x="125" y="0" width="10" height="28" rx="2" fill="#34C759" opacity="0.8"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">🌡️</span><span class="hc-name">体温</span></div>
+    <div class="hc-value">36.5<span class="hc-unit">°</span></div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#FF9500" stroke-width="1.2" stroke-linecap="round" opacity="0.6"
+          points="0,14 25,12 50,15 75,13 100,14 125,11 150,14"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">💗</span><span class="hc-name">ECG</span></div>
+    <div class="hc-value" style="font-size:16px">窦性心律</div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <polyline class="spark-line" fill="none" stroke="#AF52DE" stroke-width="1.5" stroke-linecap="round"
+          points="0,14 15,14 25,14 30,4 35,24 40,14 50,14 65,14 75,14 80,4 85,24 90,14 100,14 115,14 125,14 130,4 135,24 140,14 150,14"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="health-card">
+    <div class="hc-top"><span class="hc-icon">👟</span><span class="hc-name">今日步数</span></div>
+    <div class="hc-value">6,280</div>
+    <div class="hc-chart">
+      <svg viewBox="0 0 150 28" preserveAspectRatio="none">
+        <rect x="5" y="18" width="12" height="10" rx="2" fill="#007AFF" opacity="0.2"/>
+        <rect x="22" y="14" width="12" height="14" rx="2" fill="#007AFF" opacity="0.3"/>
+        <rect x="39" y="10" width="12" height="18" rx="2" fill="#007AFF" opacity="0.35"/>
+        <rect x="56" y="6" width="12" height="22" rx="2" fill="#007AFF" opacity="0.4"/>
+        <rect x="73" y="8" width="12" height="20" rx="2" fill="#007AFF" opacity="0.45"/>
+        <rect x="90" y="4" width="12" height="24" rx="2" fill="#007AFF" opacity="0.5"/>
+        <rect x="107" y="2" width="12" height="26" rx="2" fill="#007AFF" opacity="0.6"/>
+        <rect x="124" y="0" width="12" height="28" rx="2" fill="#007AFF" opacity="0.8"/>
+        <rect x="141" y="16" width="9" height="6" rx="2" fill="#007AFF" opacity="0.15"/>
+      </svg>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /content -->
+</div><!-- /app-scroll -->
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <div class="tab-item active">
+    <div class="tab-icon">❤️</div>
+    <div class="tab-label">健康</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">🏃</div>
+    <div class="tab-label">运动</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">⌚</div>
+    <div class="tab-label">设备</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">👤</div>
+    <div class="tab-label">我的</div>
+  </div>
+</div>
+
+</div><!-- /phone-screen -->
+</div><!-- /phone -->
+
+</div><!-- /prototype-container -->
+</div>
+
+<script>
+// Score ring animation
+const ring = document.getElementById('scoreRing');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) ring.classList.add('animated'); });
+}, { threshold: 0.5 });
+obs.observe(ring);
+
+// Fade-up animations
+document.querySelectorAll('.fade-up').forEach((el, i) => {
+  const o = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.style.animationPlayState = 'running'; }
+    });
+  }, { threshold: 0.1 });
+  o.observe(el);
+});
+
+// AI buttons
+function acceptAI() {
+  const btn = document.getElementById('aiAccept');
+  btn.textContent = '已加入今日行动 ✓';
+  btn.classList.add('accepted');
+  btn.style.pointerEvents = 'none';
+  document.getElementById('aiDismiss').style.display = 'none';
+}
+
+function dismissAI() {
+  const btn = document.getElementById('aiDismiss');
+  btn.textContent = '已忽略';
+  btn.classList.add('dismissed');
+  btn.style.pointerEvents = 'none';
+  document.getElementById('aiAccept').style.opacity = '0.4';
+  document.getElementById('aiAccept').style.pointerEvents = 'none';
+}
+
+// Risk card dismiss
+function dismissRisk() {
+  document.getElementById('riskCard').classList.add('dismissed');
+}
+
+// Exercise start
+function startExercise() {
+  const btn = document.getElementById('startBtn');
+  btn.textContent = '已开始 →';
+  btn.classList.add('started');
+  btn.style.pointerEvents = 'none';
+}
+</script>
+</body>
+</html>

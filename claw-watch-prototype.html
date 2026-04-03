@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小米运动健康 Claw — 手表端交互原型</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #000000;
+  --bg: #0a0a0c;
+  --surface: #111114;
+  --surface-2: #1a1a1f;
+  --border: #2a2a30;
+  --text: #e8e8ec;
+  --text-dim: #888892;
+  --text-muted: #555560;
+  --green-1: #4ADE80;
+  --green-2: #22C55E;
+  --green-3: #16A34A;
+  --green-dark: #0a3d1f;
+  --orange: #F59E0B;
+  --orange-dark: #3d2a06;
+  --red: #EF4444;
+  --red-dark: #3d1111;
+  --purple: #8B5CF6;
+  --purple-dim: #6D42D9;
+  --purple-dark: #1f1540;
+  --blue: #38BDF8;
+  --watch-size: 280px;
+  --bezel-width: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 60px 20px 20px;
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(74,222,128,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--green-1), var(--green-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Category Labels */
+.category {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 40px 40px 10px;
+}
+
+.category-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-left: 4px;
+  border-left: 2px solid var(--green-2);
+  padding-left: 12px;
+}
+
+/* Watch Grid */
+.watch-grid {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 20px 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 36px;
+  justify-items: center;
+}
+
+@media (max-width: 1200px) { .watch-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .watch-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Watch Container */
+.watch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.watch-item:hover { transform: translateY(-4px); }
+
+.watch-item .label {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-align: center;
+  max-width: 200px;
+}
+
+/* Watch Frame */
+.watch {
+  width: var(--watch-size);
+  height: var(--watch-size);
+  border-radius: 50%;
+  position: relative;
+  /* Metallic bezel */
+  background: conic-gradient(from 0deg, #3a3a42, #5a5a65, #3a3a42, #2a2a30, #4a4a55, #3a3a42);
+  padding: var(--bezel-width);
+  box-shadow:
+    0 2px 20px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+.watch::before {
+  content: '';
+  position: absolute;
+  top: 3px; right: -4px;
+  width: 8px; height: 28px;
+  background: linear-gradient(to bottom, #5a5a65, #3a3a42);
+  border-radius: 0 4px 4px 0;
+  box-shadow: 1px 0 3px rgba(0,0,0,0.4);
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--black);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== WATCH FACE: Main ===== */
+.wf-main .wf-time {
+  position: absolute;
+  top: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.wf-main .wf-date {
+  position: absolute;
+  top: 44px;
+  font-size: 10px;
+  color: var(--text-dim);
+  font-weight: 300;
+}
+
+/* Score Ring */
+.score-ring-container {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin-top: -4px;
+}
+
+.score-ring-container svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-ring-bg {
+  fill: none;
+  stroke: #1a1f1a;
+  stroke-width: 6;
+}
+
+.score-ring-fg {
+  fill: none;
+  stroke: url(#greenGrad);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 340;
+  stroke-dashoffset: 340;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-ring-fg.animated {
+  stroke-dashoffset: 71.4;
+}
+
+.score-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-number .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--green-1);
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(74,222,128,0.3);
+}
+
+.score-number .unit {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Four Pillars */
+.pillars {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.pillar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.pillar-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.pillar-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #2a2a30;
+}
+
+.pillar-dot.active { background: var(--green-1); }
+.pillar-dot.active.dim { background: var(--green-3); opacity: 0.6; }
+
+.pillar-label {
+  font-size: 7px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* Dynamic Message */
+.wf-message {
+  position: absolute;
+  bottom: 32px;
+  text-align: center;
+  padding: 0 30px;
+  font-size: 10px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+.wf-message .icon {
+  font-size: 10px;
+  margin-right: 2px;
+}
+
+/* Tick marks around edge */
+.tick-marks {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+}
+
+.tick-marks span {
+  position: absolute;
+  width: 1px;
+  height: 4px;
+  background: #222228;
+  top: 0;
+  left: 50%;
+  transform-origin: 0 calc(var(--watch-size)/2 - var(--bezel-width) - 4px);
+}
+
+/* ===== Night Version ===== */
+.wf-night .screen {
+  background: radial-gradient(circle at 50% 40%, #0d0a1a, #000);
+}
+
+.wf-night .score-ring-bg { stroke: #1a1520; }
+.wf-night .score-ring-fg { stroke: var(--purple) !important; }
+.wf-night .score-number .num {
+  color: var(--purple);
+  text-shadow: 0 0 30px rgba(139,92,246,0.3);
+}
+
+/* ===== Action List ===== */
+.action-list {
+  padding: 24px 28px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.action-list .al-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 170px;
+  padding: 7px 0;
+  border-bottom: 1px solid #1a1a1f;
+}
+
+.action-item:last-of-type { border-bottom: none; }
+
+.action-check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid #3a3a42;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 9px;
+}
+
+.action-check.done {
+  background: var(--green-3);
+  border-color: var(--green-2);
+  color: white;
+}
+
+.action-text {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.action-text.done-text {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.action-time {
+  font-size: 9px;
+  color: var(--green-1);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.action-progress {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.action-progress .bar {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.action-progress .pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2a2a30;
+}
+
+.action-progress .pip.filled { background: var(--green-1); }
+
+.action-progress .prog-text {
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+/* ===== Notification Styles ===== */
+.notif {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 30px;
+  text-align: center;
+  height: 100%;
+}
+
+.notif-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.notif-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 5px;
+  letter-spacing: -0.3px;
+}
+
+.notif-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.notif-btn {
+  padding: 7px 24px;
+  border-radius: 20px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.notif-btn.green {
+  background: linear-gradient(135deg, var(--green-2), var(--green-3));
+  color: white;
+  box-shadow: 0 2px 12px rgba(34,197,94,0.3);
+}
+
+.notif-btn.green:hover {
+  box-shadow: 0 2px 20px rgba(34,197,94,0.5);
+  transform: scale(1.03);
+}
+
+.notif-btn.gray {
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+
+.notif-btn.gray:hover { background: #222228; }
+
+.notif-btn.orange {
+  background: linear-gradient(135deg, var(--orange), #D97706);
+  color: white;
+  box-shadow: 0 2px 12px rgba(245,158,11,0.3);
+}
+
+.notif-btn.purple {
+  background: linear-gradient(135deg, var(--purple), var(--purple-dim));
+  color: white;
+  box-shadow: 0 2px 12px rgba(139,92,246,0.3);
+}
+
+.notif-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* Achievement */
+.achievement-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green-1);
+  margin: 4px 0 2px;
+  text-shadow: 0 0 20px rgba(74,222,128,0.4);
+}
+
+.achievement-stats {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Exercise Screen ===== */
+.exercise {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  height: 100%;
+  position: relative;
+}
+
+.ex-duration {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  position: absolute;
+  top: 30px;
+  letter-spacing: 1px;
+}
+
+.ex-hr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.ex-hr.normal { color: var(--green-1); text-shadow: 0 0 25px rgba(74,222,128,0.3); }
+.ex-hr.warning { color: var(--orange); text-shadow: 0 0 25px rgba(245,158,11,0.3); }
+
+.ex-hr-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* HR Zone Bar */
+.hr-zone {
+  display: flex;
+  width: 140px;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.hr-zone .zone {
+  flex: 1;
+  opacity: 0.3;
+}
+
+.hr-zone .zone.z1 { background: #22C55E; }
+.hr-zone .zone.z2 { background: #84CC16; }
+.hr-zone .zone.z3 { background: #EAB308; }
+.hr-zone .zone.z4 { background: #F59E0B; }
+.hr-zone .zone.z5 { background: #EF4444; }
+
+.hr-zone .zone.active { opacity: 1; }
+
+.hr-zone-indicator {
+  position: absolute;
+  width: 3px;
+  height: 8px;
+  background: white;
+  border-radius: 1px;
+  top: -2px;
+  transition: left 0.5s ease;
+  box-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+
+/* AI Coach Bubble */
+.ai-bubble {
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 10px;
+  color: var(--text);
+  margin: 6px 0;
+  position: relative;
+  max-width: 160px;
+  text-align: center;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.ai-bubble::before {
+  content: '🤖';
+  font-size: 8px;
+  margin-right: 3px;
+}
+
+.ai-bubble.warn {
+  background: var(--orange-dark);
+  border: 1px solid rgba(245,158,11,0.3);
+  color: var(--orange);
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.98); }
+}
+
+.ex-stats {
+  display: flex;
+  gap: 16px;
+  position: absolute;
+  bottom: 34px;
+}
+
+.ex-stat {
+  text-align: center;
+}
+
+.ex-stat .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.ex-stat .lbl {
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+/* Warning glow */
+.watch.warning-glow .screen {
+  box-shadow: inset 0 0 30px rgba(245,158,11,0.15);
+}
+
+.watch.warning-glow::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid transparent;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { border-color: rgba(245,158,11,0); }
+  50% { border-color: rgba(245,158,11,0.25); }
+}
+
+/* ===== Morning Brief ===== */
+.morning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 24px;
+  text-align: center;
+  height: 100%;
+}
+
+.morning-greeting {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+
+.morning-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--green-1);
+  margin-bottom: 10px;
+}
+
+.morning-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.morning-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--surface-2);
+  border-radius: 8px;
+}
+
+.morning-item .mi-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.morning-item .mi-text {
+  font-size: 10px;
+  color: var(--text);
+  text-align: left;
+  line-height: 1.3;
+}
+
+.morning-item .mi-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--green-1);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ===== Demo Mode Overlay ===== */
+.demo-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.demo-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.demo-overlay .watch {
+  --watch-size: 360px;
+  --bezel-width: 14px;
+  transform: scale(1);
+  animation: demoEnter 0.4s cubic-bezier(0.2, 0, 0, 1);
+}
+
+@keyframes demoEnter {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.demo-overlay .score-number .num { font-size: 60px; }
+.demo-overlay .wf-time { font-size: 16px; top: 36px; }
+.demo-overlay .wf-date { font-size: 12px; top: 56px; }
+.demo-overlay .wf-message { font-size: 12px; bottom: 42px; }
+.demo-overlay .pillar-label { font-size: 8px; }
+.demo-overlay .pillar-dot { width: 5px; height: 5px; }
+.demo-overlay .notif-icon { font-size: 40px; }
+.demo-overlay .notif-title { font-size: 20px; }
+.demo-overlay .notif-sub { font-size: 12px; }
+.demo-overlay .notif-btn { font-size: 13px; padding: 9px 28px; }
+.demo-overlay .action-list { padding: 32px 36px; }
+.demo-overlay .al-title { font-size: 14px; }
+.demo-overlay .action-item { width: 220px; padding: 9px 0; }
+.demo-overlay .action-text { font-size: 13px; }
+.demo-overlay .action-time { font-size: 10px; }
+.demo-overlay .ex-hr { font-size: 64px; }
+.demo-overlay .ai-bubble { font-size: 12px; max-width: 200px; padding: 8px 16px; }
+.demo-overlay .morning { padding: 30px 32px; }
+.demo-overlay .morning-greeting { font-size: 18px; }
+.demo-overlay .morning-item .mi-text { font-size: 12px; }
+
+.demo-label {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.demo-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.demo-close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.demo-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.demo-nav button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.demo-nav button:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* Sleep notification purple tint */
+.wf-sleep .screen {
+  background: radial-gradient(circle at 50% 30%, #0d0820, #000);
+}
+
+/* Confetti particles for achievement */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.confetti {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  animation: confettiFall 2s ease-in forwards;
+  opacity: 0;
+}
+
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(120px) rotate(720deg); }
+}
+
+/* Btn click states */
+.notif-btn.clicked {
+  opacity: 0.6;
+  transform: scale(0.95) !important;
+}
+
+.notif-btn.accepted {
+  background: var(--green-dark) !important;
+  color: var(--green-1) !important;
+  box-shadow: none !important;
+}
+
+.notif-btn.dismissed {
+  background: var(--surface) !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 50px 20px 30px;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* SVG defs - hidden */
+.svg-defs { position: absolute; width: 0; height: 0; }
+
+/* Animation on scroll */
+.watch-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.5s ease forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<!-- SVG Gradients -->
+<svg class="svg-defs">
+  <defs>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ADE80"/>
+      <stop offset="100%" stop-color="#22C55E"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="header">
+  <h1>小米运动健康 Claw</h1>
+  <p>手表端交互原型 &nbsp;·&nbsp; 12 screens</p>
+</div>
+
+<!-- ===== WATCH FACES ===== -->
+<div class="category"><div class="category-label">表盘 · WATCH FACE</div></div>
+<div class="watch-grid">
+
+  <!-- 1. Main Watch Face -->
+  <div class="watch-item" style="animation-delay:0.05s" onclick="openDemo(0)">
+    <div class="watch" id="wf1">
+      <div class="screen wf-main">
+        <div class="wf-time">14:32</div>
+        <div class="wf-date">4月2日 · 周三</div>
+        <div class="score-ring-container">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-ring-bg" cx="60" cy="60" r="54"/>
+            <circle class="score-ring-fg" cx="60" cy="60" r="54" stroke="url(#greenGrad)"/>
+          </svg>
+          <div class="score-number">
+            <span class="num">79</span>
+            <span class="unit">状态分</span>
+          </div>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-dots">
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot"></div>
+            </div>
+            <div class="pillar-label">运动</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots">
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+            </div>
+            <div class="pillar-label">睡眠</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots">
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot"></div>
+              <div class="pillar-dot"></div>
+            </div>
+            <div class="pillar-label">饮食</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots">
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot active"></div>
+              <div class="pillar-dot"></div>
+            </div>
+            <div class="pillar-label">情绪</div>
+          </div>
+        </div>
+        <div class="wf-message">昨晚深睡64min，今天状态不错</div>
+      </div>
+    </div>
+    <span class="label">Claw 主表盘 · 默认</span>
+  </div>
+
+  <!-- 2. Afternoon Version -->
+  <div class="watch-item" style="animation-delay:0.1s" onclick="openDemo(1)">
+    <div class="watch">
+      <div class="screen wf-main">
+        <div class="wf-time">15:18</div>
+        <div class="wf-date">4月2日 · 周三</div>
+        <div class="score-ring-container">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-ring-bg" cx="60" cy="60" r="54"/>
+            <circle class="score-ring-fg" cx="60" cy="60" r="54" stroke="url(#greenGrad)" style="stroke-dashoffset:71.4"/>
+          </svg>
+          <div class="score-number">
+            <span class="num">79</span>
+            <span class="unit">状态分</span>
+          </div>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot"></div></div>
+            <div class="pillar-label">运动</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot active"></div></div>
+            <div class="pillar-label">睡眠</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot"></div><div class="pillar-dot"></div></div>
+            <div class="pillar-label">饮食</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot active"></div><div class="pillar-dot"></div></div>
+            <div class="pillar-label">情绪</div>
+          </div>
+        </div>
+        <div class="wf-message"><span class="icon">🏃</span> 17:30 慢跑计划 · 30分钟</div>
+      </div>
+    </div>
+    <span class="label">Claw 主表盘 · 午后</span>
+  </div>
+
+  <!-- 3. Night Version -->
+  <div class="watch-item" style="animation-delay:0.15s" onclick="openDemo(2)">
+    <div class="watch wf-night">
+      <div class="screen wf-main">
+        <div class="wf-time" style="color:#c4b5fd">22:15</div>
+        <div class="wf-date" style="color:#7c6daa">4月2日 · 周三</div>
+        <div class="score-ring-container">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-ring-bg" cx="60" cy="60" r="54"/>
+            <circle class="score-ring-fg" cx="60" cy="60" r="54" stroke="url(#purpleGrad)" style="stroke-dashoffset:54.4"/>
+          </svg>
+          <div class="score-number">
+            <span class="num">84</span>
+            <span class="unit">状态分</span>
+          </div>
+        </div>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div></div>
+            <div class="pillar-label" style="color:#7c6daa">运动</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div></div>
+            <div class="pillar-label" style="color:#7c6daa">睡眠</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot"></div></div>
+            <div class="pillar-label" style="color:#7c6daa">饮食</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-dots"><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot active" style="background:var(--purple)"></div><div class="pillar-dot"></div></div>
+            <div class="pillar-label" style="color:#7c6daa">情绪</div>
+          </div>
+        </div>
+        <div class="wf-message" style="color:#9d8ec7"><span class="icon">🌙</span> 还有45min到目标入睡时间</div>
+      </div>
+    </div>
+    <span class="label">Claw 主表盘 · 夜间</span>
+  </div>
+
+  <!-- 4. Today Actions -->
+  <div class="watch-item" style="animation-delay:0.2s" onclick="openDemo(3)">
+    <div class="watch">
+      <div class="screen">
+        <div class="action-list">
+          <div class="al-title">今日行动</div>
+          <div class="action-item">
+            <div class="action-check done">✓</div>
+            <div style="flex:1">
+              <div class="action-text done-text">午后散步 15min</div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-check" style="border-color:var(--green-2)"></div>
+            <div style="flex:1">
+              <div class="action-text">慢跑 30min</div>
+              <div class="action-time">17:30</div>
+            </div>
+          </div>
+          <div class="action-item">
+            <div class="action-check"></div>
+            <div style="flex:1">
+              <div class="action-text">23:00 前入睡</div>
+            </div>
+          </div>
+          <div class="action-progress">
+            <div class="bar">
+              <div class="pip filled"></div>
+              <div class="pip filled"></div>
+              <div class="pip filled"></div>
+              <div class="pip"></div>
+              <div class="pip"></div>
+            </div>
+            <div class="prog-text">本周运动 3/5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="label">今日行动列表</span>
+  </div>
+</div>
+
+<!-- ===== NOTIFICATIONS ===== -->
+<div class="category"><div class="category-label">智能通知 · NOTIFICATIONS</div></div>
+<div class="watch-grid">
+
+  <!-- 5. Sedentary Reminder -->
+  <div class="watch-item" style="animation-delay:0.25s" onclick="openDemo(4)">
+    <div class="watch">
+      <div class="screen">
+        <div class="notif">
+          <div class="notif-icon">🧍</div>
+          <div class="notif-title">站起来走走</div>
+          <div class="notif-sub">已连续坐了 90 分钟</div>
+          <button class="notif-btn green" onclick="event.stopPropagation();btnClick(this,'好的 ✓')">好的</button>
+        </div>
+      </div>
+    </div>
+    <span class="label">轻提醒 · 久坐提醒</span>
+  </div>
+
+  <!-- 6. Exercise Reminder -->
+  <div class="watch-item" style="animation-delay:0.3s" onclick="openDemo(5)">
+    <div class="watch">
+      <div class="screen">
+        <div class="notif">
+          <div class="notif-icon">🏃‍♂️</div>
+          <div class="notif-title">慢跑时间到了</div>
+          <div class="notif-sub">30分钟 · 建议配速 6'30"</div>
+          <div class="notif-btns">
+            <button class="notif-btn green" onclick="event.stopPropagation();btnClick(this,'开始 →')">开始</button>
+            <button class="notif-btn gray" onclick="event.stopPropagation();btnClick(this,'已推迟')">推迟30min</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="label">行动提醒 · 运动提醒</span>
+  </div>
+
+  <!-- 7. Achievement -->
+  <div class="watch-item" style="animation-delay:0.35s" onclick="openDemo(6)">
+    <div class="watch">
+      <div class="screen">
+        <div class="confetti-container" id="confetti1"></div>
+        <div class="notif">
+          <div class="notif-icon" style="font-size:36px">🏆</div>
+          <div class="notif-title">跑步完成！</div>
+          <div class="achievement-stats">3.2km · 28min · 8'45"/km</div>
+          <div class="achievement-score">状态分 +8</div>
+          <button class="notif-btn green" onclick="event.stopPropagation();" style="font-size:10px;padding:5px 18px">查看详情</button>
+        </div>
+      </div>
+    </div>
+    <span class="label">即时反馈 · 运动完成</span>
+  </div>
+
+  <!-- 10. Sleep Reminder -->
+  <div class="watch-item" style="animation-delay:0.4s" onclick="openDemo(7)">
+    <div class="watch wf-sleep">
+      <div class="screen">
+        <div class="notif">
+          <div class="notif-icon">🌙</div>
+          <div class="notif-title" style="color:#c4b5fd">该准备睡觉了</div>
+          <div class="notif-sub" style="color:#8b7fad">距离目标入睡时间<br>还有 30 分钟</div>
+          <button class="notif-btn purple" onclick="event.stopPropagation();btnClick(this,'已开启 ✓')">开启助眠模式</button>
+        </div>
+      </div>
+    </div>
+    <span class="label">睡眠提醒 · 助眠引导</span>
+  </div>
+</div>
+
+<!-- ===== EXERCISE ===== -->
+<div class="category"><div class="category-label">运动中 · EXERCISE AI COACH</div></div>
+<div class="watch-grid">
+
+  <!-- 8. Exercise Normal -->
+  <div class="watch-item" style="animation-delay:0.45s" onclick="openDemo(8)">
+    <div class="watch">
+      <div class="screen">
+        <div class="exercise">
+          <div class="ex-duration">15:32</div>
+          <div class="ex-hr normal">148</div>
+          <div class="ex-hr-label">BPM</div>
+          <div class="hr-zone">
+            <div class="zone z1 active"></div>
+            <div class="zone z2"></div>
+            <div class="zone z3"></div>
+            <div class="zone z4"></div>
+            <div class="zone z5"></div>
+            <div class="hr-zone-indicator" style="left:15%"></div>
+          </div>
+          <div class="ai-bubble">配速不错，保持！</div>
+          <div class="ex-stats">
+            <div class="ex-stat">
+              <div class="val">1.8km</div>
+              <div class="lbl">距离</div>
+            </div>
+            <div class="ex-stat">
+              <div class="val">8'12"</div>
+              <div class="lbl">配速</div>
+            </div>
+            <div class="ex-stat">
+              <div class="val">186</div>
+              <div class="lbl">卡路里</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="label">AI 教练 · 状态正常</span>
+  </div>
+
+  <!-- 9. Exercise Warning -->
+  <div class="watch-item" style="animation-delay:0.5s" onclick="openDemo(9)">
+    <div class="watch warning-glow">
+      <div class="screen">
+        <div class="exercise">
+          <div class="ex-duration" style="color:var(--orange)">18:47</div>
+          <div class="ex-hr warning">168</div>
+          <div class="ex-hr-label" style="color:var(--orange)">BPM</div>
+          <div class="hr-zone">
+            <div class="zone z1"></div>
+            <div class="zone z2"></div>
+            <div class="zone z3"></div>
+            <div class="zone z4 active"></div>
+            <div class="zone z5"></div>
+            <div class="hr-zone-indicator" style="left:68%"></div>
+          </div>
+          <div class="ai-bubble warn">心率偏高，放慢一点</div>
+          <div class="ex-stats">
+            <div class="ex-stat">
+              <div class="val" style="color:var(--orange)">2.4km</div>
+              <div class="lbl">距离</div>
+            </div>
+            <div class="ex-stat">
+              <div class="val" style="color:var(--orange)">7'48"</div>
+              <div class="lbl">配速</div>
+            </div>
+            <div class="ex-stat">
+              <div class="val" style="color:var(--orange)">245</div>
+              <div class="lbl">卡路里</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="label">AI 教练 · 心率预警</span>
+  </div>
+
+  <!-- 11. Morning Brief -->
+  <div class="watch-item" style="animation-delay:0.55s" onclick="openDemo(10)">
+    <div class="watch">
+      <div class="screen" style="background:radial-gradient(circle at 50% 20%, #1a1408, #000)">
+        <div class="morning">
+          <div class="morning-greeting">☀️ 早安</div>
+          <div class="morning-score">今日状态分 <span style="font-weight:700;font-size:14px">82</span></div>
+          <div class="morning-items">
+            <div class="morning-item">
+              <span class="mi-icon">😴</span>
+              <span class="mi-text">昨夜睡眠</span>
+              <span class="mi-val">7.2h</span>
+            </div>
+            <div class="morning-item">
+              <span class="mi-icon">🌊</span>
+              <span class="mi-text">深睡</span>
+              <span class="mi-val">64min</span>
+            </div>
+            <div class="morning-item">
+              <span class="mi-icon">🏃</span>
+              <span class="mi-text">今日重点</span>
+              <span class="mi-val" style="font-family:'Outfit';font-size:9px;color:var(--text-dim)">慢跑30min</span>
+            </div>
+            <div class="morning-item">
+              <span class="mi-icon">🌤️</span>
+              <span class="mi-text">天气</span>
+              <span class="mi-val">22°C</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="label">晨间状态简报</span>
+  </div>
+
+  <!-- 12. Abnormal Alert -->
+  <div class="watch-item" style="animation-delay:0.6s" onclick="openDemo(11)">
+    <div class="watch">
+      <div class="screen" style="background:radial-gradient(circle at 50% 30%, #1a0a0a, #000)">
+        <div class="notif">
+          <div class="notif-icon" style="font-size:28px">⚠️</div>
+          <div class="notif-title" style="color:var(--orange);font-size:14px">心率偏高提醒</div>
+          <div class="notif-sub" style="font-size:9px;line-height:1.5">静息心率连续3天<br>高于个人基线<br><span style="color:var(--orange);font-size:10px;font-family:'JetBrains Mono'">72 → 81 BPM</span></div>
+          <div style="font-size:9px;color:var(--text-muted);margin-bottom:10px">建议今天降低运动强度</div>
+          <button class="notif-btn orange" onclick="event.stopPropagation();btnClick(this,'已查看 ✓')" style="font-size:10px;padding:6px 18px">了解详情</button>
+        </div>
+      </div>
+    </div>
+    <span class="label">异常预警 · 心率偏高</span>
+  </div>
+</div>
+
+<!-- Demo Overlay -->
+<div class="demo-overlay" id="demoOverlay" onclick="closeDemo(event)">
+  <button class="demo-close" onclick="closeDemo(event)">✕</button>
+  <div class="demo-nav">
+    <button onclick="event.stopPropagation();navDemo(-1)">←</button>
+    <button onclick="event.stopPropagation();navDemo(1)">→</button>
+  </div>
+  <div id="demoWatch"></div>
+  <div class="demo-label" id="demoLabel"></div>
+</div>
+
+<div class="footer">
+  XIAOMI HEALTH CLAW · WATCH PROTOTYPE · 2026
+</div>
+
+<script>
+// Ring animation on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const rings = entry.target.querySelectorAll('.score-ring-fg');
+      rings.forEach(r => r.classList.add('animated'));
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.watch-item').forEach(item => observer.observe(item));
+
+// Confetti
+function createConfetti(container) {
+  const colors = ['#4ADE80', '#22C55E', '#FBBF24', '#38BDF8', '#A78BFA', '#F472B6'];
+  for (let i = 0; i < 20; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 1.5 + 's';
+    c.style.width = (2 + Math.random() * 3) + 'px';
+    c.style.height = c.style.width;
+    container.appendChild(c);
+  }
+}
+createConfetti(document.getElementById('confetti1'));
+
+// Button click handler
+function btnClick(btn, text) {
+  btn.classList.add('clicked');
+  setTimeout(() => {
+    btn.textContent = text;
+    btn.classList.remove('clicked');
+    btn.classList.add('accepted');
+    btn.style.pointerEvents = 'none';
+  }, 200);
+}
+
+// Demo mode
+const watches = document.querySelectorAll('.watch-item');
+const labels = [];
+const watchClones = [];
+
+watches.forEach((w, i) => {
+  labels.push(w.querySelector('.label').textContent);
+});
+
+let currentDemo = 0;
+
+function openDemo(index) {
+  currentDemo = index;
+  const overlay = document.getElementById('demoOverlay');
+  const container = document.getElementById('demoWatch');
+  const label = document.getElementById('demoLabel');
+
+  container.innerHTML = '';
+  const clone = watches[index].querySelector('.watch').cloneNode(true);
+  container.appendChild(clone);
+  label.textContent = labels[index];
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Animate rings in demo
+  setTimeout(() => {
+    clone.querySelectorAll('.score-ring-fg').forEach(r => r.classList.add('animated'));
+  }, 100);
+
+  // Recreate confetti if achievement screen
+  if (index === 6) {
+    const cc = clone.querySelector('.confetti-container');
+    if (cc) { cc.innerHTML = ''; createConfetti(cc); }
+  }
+
+  // Re-bind buttons in demo
+  clone.querySelectorAll('.notif-btn').forEach(btn => {
+    const origText = btn.textContent;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      btn.classList.add('clicked');
+      setTimeout(() => {
+        const responses = {
+          '好的': '好的 ✓',
+          '开始': '开始 →',
+          '推迟30min': '已推迟',
+          '开启助眠模式': '已开启 ✓',
+          '了解详情': '已查看 ✓',
+          '查看详情': '查看中...'
+        };
+        btn.textContent = responses[origText] || '✓';
+        btn.classList.remove('clicked');
+        btn.classList.add('accepted');
+      }, 200);
+    });
+  });
+}
+
+function closeDemo(e) {
+  if (e.target === document.getElementById('demoOverlay') || e.target.closest('.demo-close')) {
+    document.getElementById('demoOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function navDemo(dir) {
+  currentDemo = (currentDemo + dir + watches.length) % watches.length;
+  openDemo(currentDemo);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (!document.getElementById('demoOverlay').classList.contains('active')) return;
+  if (e.key === 'Escape') { document.getElementById('demoOverlay').classList.remove('active'); document.body.style.overflow = ''; }
+  if (e.key === 'ArrowLeft') navDemo(-1);
+  if (e.key === 'ArrowRight') navDemo(1);
+});
+
+// Stagger animations
+watches.forEach((w, i) => {
+  w.style.animationDelay = (i * 0.08) + 's';
+});
+</script>
+</body>
+</html>
