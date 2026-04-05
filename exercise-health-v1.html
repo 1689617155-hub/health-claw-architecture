@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运动与健康 · 高保真原型</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #E8EAED;
+  --app-bg: #F2F3F5;
+  --white: #FFFFFF;
+  --card: #FFFFFF;
+  --text-1: #1A1C1E;
+  --text-2: #4A4D52;
+  --text-3: #8A8D93;
+  --text-4: #B0B3B8;
+  --divider: #E8EAED;
+  --green: #34C759;
+  --green-light: #E8F8EE;
+  --green-dark: #1B9E3E;
+  --orange: #FF9F0A;
+  --orange-light: #FFF3E0;
+  --red: #FF3B30;
+  --red-light: #FFEBEE;
+  --blue: #007AFF;
+  --purple: #8B5CF6;
+  --purple-light: #F3EEFF;
+  --phone-w: 390px;
+  --phone-h: 844px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  font-family: 'Plus Jakarta Sans', -apple-system, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40px 20px;
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== Layout ==================== */
+.prototype-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+
+/* ==================== Annotations ==================== */
+.annotations {
+  width: 220px;
+  padding-top: 110px;
+  flex-shrink: 0;
+}
+
+.anno-group {
+  position: relative;
+  padding-right: 24px;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: annoIn 0.5s ease forwards;
+}
+
+@keyframes annoIn { to { opacity: 1; transform: translateX(0); } }
+
+.anno-group::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 16px;
+  height: 1px;
+  background: var(--text-4);
+}
+
+.anno-group::before {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-4);
+}
+
+.anno-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+}
+
+.anno-list {
+  list-style: none;
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.7;
+}
+
+.anno-sub {
+  padding-left: 10px;
+  color: var(--text-4);
+  font-size: 10px;
+}
+
+/* ==================== Phone Frame ==================== */
+.phone {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  background: #000;
+  border-radius: 50px;
+  padding: 12px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.2), 0 2px 10px rgba(0,0,0,0.1), inset 0 0 0 2px rgba(255,255,255,0.1);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.phone-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+  background: var(--app-bg);
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 16px 90px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.phone-screen::-webkit-scrollbar { display: none; }
+
+/* Status bar */
+.status-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(242,243,245,0.92);
+  backdrop-filter: blur(20px);
+  padding: 14px 24px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-icons {
+  display: flex;
+  gap: 5px;
+  font-size: 12px;
+}
+
+/* ==================== Nav Header ==================== */
+.page-nav {
+  display: flex;
+  align-items: center;
+  padding: 8px 0 16px;
+  gap: 10px;
+}
+
+.nav-back {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* ==================== Section: Hero ==================== */
+.hero-card {
+  background: linear-gradient(135deg, #1B9E3E 0%, #34C759 50%, #5BD17F 100%);
+  border-radius: 20px;
+  padding: 22px 20px;
+  color: white;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+
+.hero-card::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 40px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+.hero-subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-stat {
+  flex: 1;
+  text-align: center;
+}
+
+.hero-stat:not(:last-child) {
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.hero-stat-label {
+  font-size: 10px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+/* ==================== Section: Evidence Cards ==================== */
+.section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 20px 0 12px;
+  letter-spacing: -0.3px;
+}
+
+.evidence-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+}
+
+.evidence-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.evidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--green-light);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+
+.evidence-period {
+  font-size: 11px;
+  color: var(--text-4);
+}
+
+.compare-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.compare-col {
+  flex: 1;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  position: relative;
+}
+
+.compare-col.active {
+  background: var(--green-light);
+  border: 1.5px solid rgba(52,199,89,0.2);
+}
+
+.compare-col.inactive {
+  background: #F5F5F7;
+  border: 1.5px solid transparent;
+}
+
+.compare-tag {
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.compare-col.active .compare-tag { color: var(--green-dark); }
+.compare-col.inactive .compare-tag { color: var(--text-3); }
+
+.compare-metric {
+  margin-bottom: 6px;
+}
+
+.compare-metric-label {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-bottom: 2px;
+}
+
+.compare-metric-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.compare-col.active .compare-metric-value { color: var(--green-dark); }
+.compare-col.inactive .compare-metric-value { color: var(--text-2); }
+
+.compare-metric-unit {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-left: 1px;
+}
+
+.compare-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  background: rgba(52,199,89,0.08);
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.evidence-insight {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.6;
+  padding: 10px 12px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  border-left: 3px solid var(--green);
+}
+
+.evidence-insight strong {
+  color: var(--green-dark);
+}
+
+/* ==================== Section: Timeline ==================== */
+.timeline-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+}
+
+.timeline-tabs {
+  display: flex;
+  gap: 0;
+  background: #F5F5F7;
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 16px;
+}
+
+.timeline-tab {
+  flex: 1;
+  padding: 7px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-align: center;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .2s;
+}
+
+.timeline-tab.active {
+  background: white;
+  color: var(--text-1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.timeline-chart {
+  height: 160px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.timeline-chart svg { width: 100%; height: 100%; }
+
+.timeline-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-3);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legend-dot.bar { background: rgba(52,199,89,0.3); border-radius: 2px; }
+.legend-dot.line { background: var(--purple); border-radius: 50%; }
+
+/* Annotation markers */
+.chart-marker {
+  position: absolute;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chart-marker.good {
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.chart-marker.bad {
+  background: var(--red-light);
+  color: var(--red);
+}
+
+/* ==================== Section: Prediction ==================== */
+.predict-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.predict-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.predict-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.predict-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.predict-subtitle {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.predict-visual {
+  height: 80px;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.predict-visual svg { width: 100%; height: 100%; }
+
+.predict-goal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--purple-light);
+  border-radius: 12px;
+}
+
+.predict-goal-text {
+  font-size: 12px;
+  color: var(--purple);
+  font-weight: 600;
+}
+
+.predict-goal-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--purple);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.predict-goal-eta {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: right;
+}
+
+/* ==================== Section: Deep Insights ==================== */
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.insight-item {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.insight-item:active { background: #F5F5F7; }
+
+.insight-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.insight-icon.sleep { background: #EDE7FF; }
+.insight-icon.hr { background: #FFEBE8; }
+.insight-icon.hrv { background: #E8F8EE; }
+.insight-icon.stress { background: #FFF3E0; }
+
+.insight-info { flex: 1; }
+
+.insight-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.insight-desc {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.insight-change {
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.insight-change.up { color: var(--green); }
+.insight-change.down { color: var(--red); }
+
+.insight-arrow {
+  font-size: 14px;
+  color: var(--text-4);
+  flex-shrink: 0;
+}
+
+/* ==================== Tab Bar ==================== */
+.tab-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--divider);
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-top: 8px;
+  z-index: 10;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.tab-item:active { opacity: 0.6; }
+
+.tab-icon { font-size: 22px; }
+.tab-label {
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.tab-item.active .tab-label { color: var(--green); font-weight: 600; }
+
+/* ==================== Animations ==================== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.55s ease forwards;
+  animation-play-state: paused;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== Right Annotations ==================== */
+.annotations-right {
+  width: 200px;
+  padding-top: 110px;
+  flex-shrink: 0;
+}
+
+.anno-group-r {
+  position: relative;
+  padding-left: 24px;
+  opacity: 0;
+  transform: translateX(10px);
+  animation: annoInR 0.5s ease forwards;
+}
+
+@keyframes annoInR { to { opacity: 1; transform: translateX(0); } }
+
+.anno-group-r::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 16px;
+  height: 1px;
+  background: var(--text-4);
+}
+
+.anno-group-r::before {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-4);
+}
+</style>
+</head>
+<body>
+<div style="max-width:900px;margin:0 auto">
+
+<div class="prototype-container">
+
+<!-- ===== Left Annotations ===== -->
+<div class="annotations">
+  <div class="anno-group" style="margin-bottom:100px;animation-delay:0.1s">
+    <div class="anno-title">Hero 摘要区</div>
+    <ul class="anno-list">
+      <li>本周运动概览</li>
+      <li class="anno-sub">运动次数、状态分变化</li>
+      <li class="anno-sub">核心指标改善幅度</li>
+      <li>绿色渐变 → 正向健康感</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:200px;animation-delay:0.15s">
+    <div class="anno-title">个人证据卡片</div>
+    <ul class="anno-list">
+      <li>用用户自己的数据说话</li>
+      <li class="anno-sub">跑步日 vs 非跑步日</li>
+      <li class="anno-sub">双栏对比，差异一目了然</li>
+      <li>底部 AI 洞察总结</li>
+      <li class="anno-sub">数据 → 结论 → 建议</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:160px;animation-delay:0.2s">
+    <div class="anno-title">健康时间线</div>
+    <ul class="anno-list">
+      <li>运动柱状图 + 健康折线叠加</li>
+      <li class="anno-sub">Tab 切换不同指标</li>
+      <li class="anno-sub">关键转折点标注</li>
+      <li>用户一眼看到因果关系</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:100px;animation-delay:0.25s">
+    <div class="anno-title">前瞻预测</div>
+    <ul class="anno-list">
+      <li>基于当前节奏的预测</li>
+      <li class="anno-sub">虚线 = 未来预估轨迹</li>
+      <li class="anno-sub">具体目标 + 预计达成时间</li>
+      <li>给用户一个值得期待的未来</li>
+    </ul>
+  </div>
+
+  <div class="anno-group" style="margin-bottom:60px;animation-delay:0.3s">
+    <div class="anno-title">深度洞察列表</div>
+    <ul class="anno-list">
+      <li>各指标详细变化</li>
+      <li class="anno-sub">可点击展开详情</li>
+      <li class="anno-sub">涨跌标注 + 趋势箭头</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== Phone ===== -->
+<div class="phone">
+<div class="phone-inner">
+<div class="phone-screen">
+
+<!-- Status Bar -->
+<div class="status-bar">
+  <span>9:41</span>
+  <div class="status-icons">📶 📡 🔋</div>
+</div>
+
+<!-- Nav -->
+<div class="page-nav fade-up" style="animation-delay:0.05s">
+  <div class="nav-back">‹</div>
+  <div class="page-title">运动与健康</div>
+</div>
+
+<!-- ===== Hero Card ===== -->
+<div class="hero-card fade-up" style="animation-delay:0.1s">
+  <div class="hero-subtitle">📊 本周运动健康摘要</div>
+  <div class="hero-title">运动 4 次<br>状态分平均提升 +6</div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-value">-3</div>
+      <div class="hero-stat-label">静息心率 bpm</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">+18%</div>
+      <div class="hero-stat-label">深睡时长</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">+12</div>
+      <div class="hero-stat-label">HRV ms</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Evidence Card 1: Exercise Day vs Non-Exercise Day ===== -->
+<div class="section-title fade-up" style="animation-delay:0.15s">个人证据</div>
+
+<div class="evidence-card fade-up" style="animation-delay:0.18s">
+  <div class="evidence-header">
+    <div class="evidence-badge">🔬 你的数据证明</div>
+    <div class="evidence-period">近 30 天</div>
+  </div>
+
+  <!-- Deep Sleep comparison -->
+  <div class="compare-row">
+    <div class="compare-col active">
+      <div class="compare-tag">🏃 运动日</div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">深睡时长</div>
+        <div><span class="compare-metric-value">82</span><span class="compare-metric-unit">min</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">静息心率</div>
+        <div><span class="compare-metric-value">63</span><span class="compare-metric-unit">bpm</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">晨起 HRV</div>
+        <div><span class="compare-metric-value">52</span><span class="compare-metric-unit">ms</span></div>
+      </div>
+    </div>
+    <div class="compare-col inactive">
+      <div class="compare-tag">🛋 非运动日</div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">深睡时长</div>
+        <div><span class="compare-metric-value">59</span><span class="compare-metric-unit">min</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">静息心率</div>
+        <div><span class="compare-metric-value">68</span><span class="compare-metric-unit">bpm</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">晨起 HRV</div>
+        <div><span class="compare-metric-value">41</span><span class="compare-metric-unit">ms</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-diff" style="margin-bottom:12px">↑ 运动日深睡多 23 min，心率低 5 bpm，HRV 高 27%</div>
+
+  <div class="evidence-insight">
+    <strong>AI 洞察</strong>：你的数据显示，每次中等强度以上的运动后，当晚深睡时长显著增加。尤其是<strong>下午 17:00-19:00 的慢跑</strong>对睡眠改善效果最好。
+  </div>
+</div>
+
+<!-- ===== Evidence Card 2: This Month vs Last Month ===== -->
+<div class="evidence-card fade-up" style="animation-delay:0.22s">
+  <div class="evidence-header">
+    <div class="evidence-badge">📈 月度变化</div>
+    <div class="evidence-period">3月 vs 2月</div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-col active">
+      <div class="compare-tag">3 月（运动 12 天）</div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">平均静息心率</div>
+        <div><span class="compare-metric-value">64</span><span class="compare-metric-unit">bpm</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">平均 HRV</div>
+        <div><span class="compare-metric-value">48</span><span class="compare-metric-unit">ms</span></div>
+      </div>
+    </div>
+    <div class="compare-col inactive">
+      <div class="compare-tag">2 月（运动 4 天）</div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">平均静息心率</div>
+        <div><span class="compare-metric-value">71</span><span class="compare-metric-unit">bpm</span></div>
+      </div>
+      <div class="compare-metric">
+        <div class="compare-metric-label">平均 HRV</div>
+        <div><span class="compare-metric-value">38</span><span class="compare-metric-unit">ms</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="compare-diff">↑ 运动量增加 3 倍，静息心率下降 7 bpm</div>
+</div>
+
+<!-- ===== Timeline Chart ===== -->
+<div class="section-title fade-up" style="animation-delay:0.26s">健康时间线</div>
+
+<div class="timeline-card fade-up" style="animation-delay:0.28s">
+  <div class="timeline-tabs">
+    <button class="timeline-tab active" onclick="switchTimeline(0)">静息心率</button>
+    <button class="timeline-tab" onclick="switchTimeline(1)">深睡时长</button>
+    <button class="timeline-tab" onclick="switchTimeline(2)">HRV</button>
+  </div>
+
+  <!-- Chart 0: Resting HR -->
+  <div class="timeline-chart" id="chart0" style="display:block">
+    <!-- Annotation markers -->
+    <div class="chart-marker good" style="left:28%;top:2px">开始规律跑步</div>
+    <div class="chart-marker bad" style="left:62%;top:2px">中断 5 天</div>
+    <svg viewBox="0 0 320 140" preserveAspectRatio="none">
+      <!-- Grid -->
+      <line x1="30" y1="20" x2="310" y2="20" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="50" x2="310" y2="50" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="80" x2="310" y2="80" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="110" x2="310" y2="110" stroke="#F0F0F0" stroke-width="0.5"/>
+      <!-- Y axis labels -->
+      <text x="2" y="24" font-size="8" fill="#B0B3B8">75</text>
+      <text x="2" y="54" font-size="8" fill="#B0B3B8">70</text>
+      <text x="2" y="84" font-size="8" fill="#B0B3B8">65</text>
+      <text x="2" y="114" font-size="8" fill="#B0B3B8">60</text>
+      <!-- X axis labels -->
+      <text x="35" y="135" font-size="7" fill="#B0B3B8">3/1</text>
+      <text x="100" y="135" font-size="7" fill="#B0B3B8">3/10</text>
+      <text x="170" y="135" font-size="7" fill="#B0B3B8">3/17</text>
+      <text x="230" y="135" font-size="7" fill="#B0B3B8">3/24</text>
+      <text x="290" y="135" font-size="7" fill="#B0B3B8">3/31</text>
+      <!-- Exercise bars (green, semi-transparent) -->
+      <rect x="38" y="95" width="6" height="25" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="52" y="100" width="6" height="20" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="73" y="90" width="6" height="30" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="87" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="101" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="115" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="129" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="143" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="157" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="171" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <!-- Gap: no exercise bars from 185-215 -->
+      <rect x="227" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="241" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="255" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="269" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="283" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="297" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <!-- HR trend line (purple) -->
+      <polyline fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        points="40,25 55,28 70,30 85,38 100,48 115,55 130,62 145,68 160,75 175,80 190,72 205,65 220,58 235,70 250,78 265,85 280,90 295,95 310,100"/>
+      <!-- Key points -->
+      <circle cx="40" cy="25" r="3" fill="#8B5CF6"/>
+      <circle cx="175" cy="80" r="3" fill="#8B5CF6"/>
+      <circle cx="220" cy="58" r="4" fill="#FF3B30" stroke="white" stroke-width="1.5"/>
+      <circle cx="310" cy="100" r="3" fill="#8B5CF6"/>
+      <!-- Value labels -->
+      <text x="22" y="22" font-size="8" fill="#8B5CF6" font-weight="600">72</text>
+      <text x="300" y="98" font-size="8" fill="#8B5CF6" font-weight="600">63</text>
+    </svg>
+  </div>
+
+  <!-- Chart 1: Deep Sleep -->
+  <div class="timeline-chart" id="chart1" style="display:none">
+    <div class="chart-marker good" style="left:28%;top:2px">开始规律跑步</div>
+    <svg viewBox="0 0 320 140" preserveAspectRatio="none">
+      <line x1="30" y1="20" x2="310" y2="20" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="50" x2="310" y2="50" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="80" x2="310" y2="80" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="110" x2="310" y2="110" stroke="#F0F0F0" stroke-width="0.5"/>
+      <text x="2" y="24" font-size="8" fill="#B0B3B8">90m</text>
+      <text x="2" y="54" font-size="8" fill="#B0B3B8">75m</text>
+      <text x="2" y="84" font-size="8" fill="#B0B3B8">60m</text>
+      <text x="2" y="114" font-size="8" fill="#B0B3B8">45m</text>
+      <text x="35" y="135" font-size="7" fill="#B0B3B8">3/1</text>
+      <text x="170" y="135" font-size="7" fill="#B0B3B8">3/17</text>
+      <text x="290" y="135" font-size="7" fill="#B0B3B8">3/31</text>
+      <!-- Exercise bars -->
+      <rect x="38" y="95" width="6" height="25" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="52" y="100" width="6" height="20" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="73" y="90" width="6" height="30" rx="2" fill="rgba(52,199,89,0.2)"/>
+      <rect x="87" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="101" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="115" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="129" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="143" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="157" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="171" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="227" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="241" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="255" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="269" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="283" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="297" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <!-- Deep sleep line -->
+      <polyline fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        points="40,95 55,90 70,85 85,75 100,65 115,55 130,50 145,45 160,38 175,30 190,50 205,58 220,65 235,50 250,38 265,30 280,25 295,22 310,20"/>
+      <circle cx="40" cy="95" r="3" fill="#8B5CF6"/>
+      <circle cx="310" cy="20" r="3" fill="#8B5CF6"/>
+      <text x="22" y="92" font-size="8" fill="#8B5CF6" font-weight="600">52m</text>
+      <text x="298" y="18" font-size="8" fill="#8B5CF6" font-weight="600">86m</text>
+    </svg>
+  </div>
+
+  <!-- Chart 2: HRV -->
+  <div class="timeline-chart" id="chart2" style="display:none">
+    <div class="chart-marker good" style="left:28%;top:2px">开始规律跑步</div>
+    <svg viewBox="0 0 320 140" preserveAspectRatio="none">
+      <line x1="30" y1="20" x2="310" y2="20" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="50" x2="310" y2="50" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="80" x2="310" y2="80" stroke="#F0F0F0" stroke-width="0.5"/>
+      <line x1="30" y1="110" x2="310" y2="110" stroke="#F0F0F0" stroke-width="0.5"/>
+      <text x="2" y="24" font-size="8" fill="#B0B3B8">55</text>
+      <text x="2" y="54" font-size="8" fill="#B0B3B8">45</text>
+      <text x="2" y="84" font-size="8" fill="#B0B3B8">35</text>
+      <text x="2" y="114" font-size="8" fill="#B0B3B8">25</text>
+      <text x="35" y="135" font-size="7" fill="#B0B3B8">3/1</text>
+      <text x="170" y="135" font-size="7" fill="#B0B3B8">3/17</text>
+      <text x="290" y="135" font-size="7" fill="#B0B3B8">3/31</text>
+      <!-- Exercise bars -->
+      <rect x="87" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="101" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="115" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="129" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="143" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="157" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="171" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="227" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="241" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="255" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="269" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="283" y="85" width="6" height="35" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <rect x="297" y="80" width="6" height="40" rx="2" fill="rgba(52,199,89,0.3)"/>
+      <!-- HRV line -->
+      <polyline fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        points="40,95 55,92 70,88 85,78 100,65 115,55 130,48 145,42 160,35 175,28 190,42 205,52 220,60 235,45 250,35 265,28 280,22 295,20 310,18"/>
+      <circle cx="40" cy="95" r="3" fill="#8B5CF6"/>
+      <circle cx="310" cy="18" r="3" fill="#8B5CF6"/>
+      <text x="22" y="92" font-size="8" fill="#8B5CF6" font-weight="600">32</text>
+      <text x="300" y="16" font-size="8" fill="#8B5CF6" font-weight="600">52</text>
+    </svg>
+  </div>
+
+  <div class="timeline-legend">
+    <div class="legend-item"><div class="legend-dot bar"></div>运动时长</div>
+    <div class="legend-item"><div class="legend-dot line"></div>健康指标</div>
+  </div>
+</div>
+
+<!-- ===== Prediction Card ===== -->
+<div class="section-title fade-up" style="animation-delay:0.32s">如果你坚持</div>
+
+<div class="predict-card fade-up" style="animation-delay:0.34s">
+  <div class="predict-header">
+    <div class="predict-icon">🔮</div>
+    <div>
+      <div class="predict-title">静息心率预测</div>
+      <div class="predict-subtitle">基于你当前的运动节奏</div>
+    </div>
+  </div>
+  <div class="predict-visual">
+    <svg viewBox="0 0 320 70" preserveAspectRatio="none">
+      <!-- Solid past line -->
+      <polyline fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"
+        points="10,10 40,15 70,22 100,30 130,38 160,42"/>
+      <!-- Dotted future line -->
+      <polyline fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,4"
+        points="160,42 190,46 220,50 250,53 280,55 310,57"/>
+      <!-- Prediction zone -->
+      <path d="M160,42 L190,44 L220,47 L250,50 L280,52 L310,54 L310,62 L280,60 L250,58 L220,55 L190,50 L160,42 Z" fill="rgba(139,92,246,0.08)"/>
+      <!-- Today marker -->
+      <line x1="160" y1="0" x2="160" y2="70" stroke="#8B5CF6" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+      <circle cx="160" cy="42" r="4" fill="#8B5CF6" stroke="white" stroke-width="2"/>
+      <text x="150" y="68" font-size="8" fill="#8B5CF6" font-weight="500">今天</text>
+      <!-- Target marker -->
+      <line x1="310" y1="56" x2="310" y2="62" stroke="#8B5CF6" stroke-width="1" opacity="0.4"/>
+      <!-- Labels -->
+      <text x="10" y="7" font-size="8" fill="#B0B3B8">72</text>
+      <text x="147" y="38" font-size="9" fill="#8B5CF6" font-weight="700">63</text>
+      <text x="296" y="52" font-size="9" fill="#8B5CF6" font-weight="700">58</text>
+      <text x="285" y="68" font-size="7" fill="#B0B3B8">3 周后</text>
+    </svg>
+  </div>
+  <div class="predict-goal">
+    <div>
+      <div class="predict-goal-text">目标：优秀水平</div>
+      <div class="predict-goal-eta">按当前节奏约 3 周达成</div>
+    </div>
+    <div class="predict-goal-value">&lt; 60 bpm</div>
+  </div>
+</div>
+
+<!-- Reverse warning card -->
+<div class="predict-card fade-up" style="animation-delay:0.37s;border-left:3px solid var(--orange)">
+  <div class="predict-header">
+    <div class="predict-icon" style="background:var(--orange-light)">⚡</div>
+    <div>
+      <div class="predict-title" style="color:var(--orange)">别停下来</div>
+      <div class="predict-subtitle">上次中断运动 5 天的影响</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--text-2);line-height:1.6;padding:8px 0">
+    3月21日–25日你中断了运动，期间静息心率<strong style="color:var(--red)">回升了 6 bpm</strong>，HRV 下降了 15%，深睡减少了 18 分钟。恢复到中断前水平花了 <strong>8 天</strong>。
+  </div>
+  <div style="font-size:11px;color:var(--orange);font-weight:600;background:var(--orange-light);padding:8px 12px;border-radius:8px;text-align:center">
+    💪 坚持比强度更重要 — 哪怕每天走 20 分钟也好
+  </div>
+</div>
+
+<!-- ===== Deep Insights ===== -->
+<div class="section-title fade-up" style="animation-delay:0.4s">深度洞察</div>
+
+<div class="insight-list fade-up" style="animation-delay:0.42s">
+  <div class="insight-item">
+    <div class="insight-icon sleep">😴</div>
+    <div class="insight-info">
+      <div class="insight-name">深睡时长</div>
+      <div class="insight-desc">运动日平均 82 min</div>
+    </div>
+    <div class="insight-change up">+39%</div>
+    <div class="insight-arrow">›</div>
+  </div>
+  <div class="insight-item">
+    <div class="insight-icon hr">❤️</div>
+    <div class="insight-info">
+      <div class="insight-name">静息心率</div>
+      <div class="insight-desc">本月平均 64 bpm</div>
+    </div>
+    <div class="insight-change up">-7</div>
+    <div class="insight-arrow">›</div>
+  </div>
+  <div class="insight-item">
+    <div class="insight-icon hrv">💚</div>
+    <div class="insight-info">
+      <div class="insight-name">心率变异性 HRV</div>
+      <div class="insight-desc">本月平均 48 ms</div>
+    </div>
+    <div class="insight-change up">+26%</div>
+    <div class="insight-arrow">›</div>
+  </div>
+  <div class="insight-item">
+    <div class="insight-icon stress">😌</div>
+    <div class="insight-info">
+      <div class="insight-name">压力水平</div>
+      <div class="insight-desc">运动后 2h 平均降 32%</div>
+    </div>
+    <div class="insight-change up">-32%</div>
+    <div class="insight-arrow">›</div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <div class="tab-item active">
+    <div class="tab-icon">❤️</div>
+    <div class="tab-label">健康</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">🏃</div>
+    <div class="tab-label">运动</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">⌚</div>
+    <div class="tab-label">设备</div>
+  </div>
+  <div class="tab-item">
+    <div class="tab-icon">👤</div>
+    <div class="tab-label">我的</div>
+  </div>
+</div>
+
+</div><!-- /phone-screen -->
+</div><!-- /phone-inner -->
+</div><!-- /phone -->
+
+</div><!-- /prototype-container -->
+</div>
+
+<script>
+// Timeline tab switching
+function switchTimeline(idx) {
+  document.querySelectorAll('.timeline-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('chart' + i).style.display = i === idx ? 'block' : 'none';
+  }
+}
+
+// Fade-up animations
+document.querySelectorAll('.fade-up').forEach(el => {
+  const o = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.style.animationPlayState = 'running'; });
+  }, { threshold: 0.1 });
+  o.observe(el);
+});
+</script>
+</body>
+</html>
